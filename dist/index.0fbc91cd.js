@@ -592,8 +592,8 @@ var _landmarksHandler = require("./landmarksHandler");
 var _utils = require("./utils");
 var _lesGensMp3 = require("../assets/sounds/les-gens.mp3");
 var _lesGensMp3Default = parcelHelpers.interopDefault(_lesGensMp3);
-var _sunset03Mp4 = require("../assets/videos/sunset_03.mp4");
-var _sunset03Mp4Default = parcelHelpers.interopDefault(_sunset03Mp4);
+var _sunset02Mp4 = require("../assets/videos/sunset_02.mp4");
+var _sunset02Mp4Default = parcelHelpers.interopDefault(_sunset02Mp4);
 window.p5 = require("94d0139496625edf");
 require("5c9986b8e4619016");
 new p5((sk)=>{
@@ -620,7 +620,7 @@ new p5((sk)=>{
         sk.background(0);
         camFeed = (0, _cameraUtils.initializeCamCapture)(sk, (0, _poseModelMediaPipe.mediaPipe));
         // Load and set up the video
-        video = sk.createVideo((0, _sunset03Mp4Default.default), ()=>{
+        video = sk.createVideo((0, _sunset02Mp4Default.default), ()=>{
             videoLoaded = true;
             video.hide(); // Hide the DOM element
         // Do not start the video yet
@@ -639,6 +639,15 @@ new p5((sk)=>{
         };
     };
     sk.draw = ()=>{
+        if (!experienceStarted) {
+            // Display the message
+            sk.background(0); // Clear the background
+            sk.fill(255); // White text
+            sk.textAlign(sk.CENTER, sk.CENTER);
+            sk.textSize(32);
+            sk.text("PRESS SPACE BAR TO START", sk.width / 2, sk.height / 2);
+            return; // Exit the draw function until the experience starts
+        }
         // Draw the video on the canvas if the experience has started
         if (videoLoaded && experienceStarted) sk.image(video, 0, 0, sk.width, sk.height);
         const landmarksIndex = [
@@ -696,10 +705,10 @@ new p5((sk)=>{
                         // Map hand movement to target playback rate with momentum
                         const minPlaybackRate = 0.1; // Minimum supported playback rate
                         const maxPlaybackRate = 1; // Normal playback rate
-                        const targetPlaybackRate = sk.map(absHandVelocity, 0, 20, minPlaybackRate, maxPlaybackRate);
+                        const targetPlaybackRate = sk.map(absHandVelocity, 0, 40, minPlaybackRate, maxPlaybackRate);
                         const clampedTargetRate = sk.constrain(targetPlaybackRate, minPlaybackRate, maxPlaybackRate);
                         // Smoothly adjust the playback rate towards the target rate
-                        smoothedPlaybackRate = 0.9 * smoothedPlaybackRate + 0.1 * clampedTargetRate;
+                        smoothedPlaybackRate = 0.95 * smoothedPlaybackRate + 0.05 * clampedTargetRate;
                         // Ensure playback rate is within supported range
                         const finalPlaybackRate = sk.constrain(smoothedPlaybackRate, minPlaybackRate, maxPlaybackRate);
                         // Set the video's playback rate
@@ -709,8 +718,11 @@ new p5((sk)=>{
                 }
             }
             prevHandX = rightHandX;
+            sk.push();
+            sk.image(camFeed, sk.width - camFeed.scaledWidth / 12 - 24, sk.height - camFeed.scaledHeight / 12 - 24, camFeed.scaledWidth / 12, camFeed.scaledHeight / 12);
+            sk.pop();
             // Visual feedback (draw an ellipse at the hand position)
-            sk.fill(120, 100, 50);
+            sk.fill(120, 100, 100);
             sk.noStroke();
             sk.ellipse(rightHandX, rightHandY, 20, 20);
         } else {
@@ -722,7 +734,7 @@ new p5((sk)=>{
     };
 });
 
-},{"94d0139496625edf":"7Uk5U","5c9986b8e4619016":"izzJQ","./poseModelMediaPipe":"8elxC","./cameraUtils":"2RWfO","./landmarksHandler":"44KuU","./utils":"bVlgj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../assets/sounds/les-gens.mp3":"iQqKj","../assets/videos/sunset_03.mp4":"7Z3QC"}],"7Uk5U":[function(require,module,exports) {
+},{"94d0139496625edf":"7Uk5U","5c9986b8e4619016":"izzJQ","./poseModelMediaPipe":"8elxC","./cameraUtils":"2RWfO","./landmarksHandler":"44KuU","./utils":"bVlgj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../assets/sounds/les-gens.mp3":"iQqKj","../assets/videos/sunset_02.mp4":"2H3Kn"}],"7Uk5U":[function(require,module,exports) {
 /*! p5.js v1.11.1 October 31, 2024 */ var global = arguments[3];
 !function(e1) {
     module.exports = e1();
@@ -57523,9 +57535,9 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"7Z3QC":[function(require,module,exports) {
-module.exports = require("8ed9cb2560aef483").getBundleURL("9up4p") + "sunset_03.f69e5188.mp4" + "?" + Date.now();
+},{}],"2H3Kn":[function(require,module,exports) {
+module.exports = require("5fde6e746c96f5ba").getBundleURL("9up4p") + "sunset_02.84b9021c.mp4" + "?" + Date.now();
 
-},{"8ed9cb2560aef483":"lgJ39"}]},["h9Rts","fFaKF"], "fFaKF", "parcelRequire94c2")
+},{"5fde6e746c96f5ba":"lgJ39"}]},["h9Rts","fFaKF"], "fFaKF", "parcelRequire94c2")
 
 //# sourceMappingURL=index.0fbc91cd.js.map

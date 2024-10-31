@@ -7,7 +7,7 @@ import { initializeCamCapture } from "./cameraUtils";
 import { getMappedLandmarks } from "./landmarksHandler";
 import { averageLandmarkPosition } from "./utils";
 import soundURL from "../assets/sounds/les-gens.mp3";
-import videoURL from "../assets/videos/sunset_03.mp4";
+import videoURL from "../assets/videos/sunset_02.mp4";
 
 new p5((sk) => {
   let camFeed;
@@ -58,6 +58,15 @@ new p5((sk) => {
   };
 
   sk.draw = () => {
+    if (!experienceStarted) {
+      // Display the message
+      sk.background(0); // Clear the background
+      sk.fill(255); // White text
+      sk.textAlign(sk.CENTER, sk.CENTER);
+      sk.textSize(32);
+      sk.text("PRESS SPACE BAR TO START", sk.width / 2, sk.height / 2);
+      return; // Exit the draw function until the experience starts
+    }
     // Draw the video on the canvas if the experience has started
     if (videoLoaded && experienceStarted) {
       sk.image(video, 0, 0, sk.width, sk.height);
@@ -166,7 +175,7 @@ new p5((sk) => {
             const targetPlaybackRate = sk.map(
               absHandVelocity,
               0,
-              20, // Adjust this threshold based on desired sensitivity
+              40, // Adjust this threshold based on desired sensitivity
               minPlaybackRate,
               maxPlaybackRate
             );
@@ -179,7 +188,7 @@ new p5((sk) => {
 
             // Smoothly adjust the playback rate towards the target rate
             smoothedPlaybackRate =
-              0.9 * smoothedPlaybackRate + 0.1 * clampedTargetRate;
+              0.95 * smoothedPlaybackRate + 0.05 * clampedTargetRate;
 
             // Ensure playback rate is within supported range
             const finalPlaybackRate = sk.constrain(
@@ -200,8 +209,18 @@ new p5((sk) => {
 
       prevHandX = rightHandX;
 
+      sk.push();
+      sk.image(
+        camFeed,
+        sk.width - camFeed.scaledWidth / 12 - 24,
+        sk.height - camFeed.scaledHeight / 12 - 24,
+        camFeed.scaledWidth / 12,
+        camFeed.scaledHeight / 12
+      );
+      sk.pop();
+
       // Visual feedback (draw an ellipse at the hand position)
-      sk.fill(120, 100, 50);
+      sk.fill(120, 100, 100);
       sk.noStroke();
       sk.ellipse(rightHandX, rightHandY, 20, 20);
     } else {
