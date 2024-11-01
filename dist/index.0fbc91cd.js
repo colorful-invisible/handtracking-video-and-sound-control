@@ -584,7 +584,6 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"fFaKF":[function(require,module,exports) {
-// VELOCITY-BASED SOUND PLAYBACK RATE, VOLUME CONTROL / VIDEO CONTROL WITH MOMENTUM EFFECT
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _poseModelMediaPipe = require("./poseModelMediaPipe");
 var _cameraUtils = require("./cameraUtils");
@@ -597,139 +596,117 @@ var _sunset02Mp4Default = parcelHelpers.interopDefault(_sunset02Mp4);
 window.p5 = require("94d0139496625edf");
 require("5c9986b8e4619016");
 new p5((sk)=>{
-    let camFeed;
-    let sound;
-    let soundLoaded = false;
+    // Media elements
+    let cam;
+    let audio;
     let video;
-    let videoLoaded = false;
+    let isAudioLoaded = false;
+    let isVideoLoaded = false;
+    let isStarted = false;
+    // Hand tracking
     let prevHandX = null;
-    let smoothedHandVelocity = 0;
-    let smoothedPlaybackRate = 1; // Start with normal playback rate
-    let experienceStarted = false; // Flag to check if experience has started
-    // ---- SETTINGS ---- //
+    let handVelSmooth = 0;
+    let playbackSmooth = 1;
+    // Settings
     const avgPos = (0, _utils.averageLandmarkPosition)(20);
+    function updateAudio(handX) {
+        if (!isAudioLoaded || !audio) return;
+        if (prevHandX !== null && isFinite(prevHandX)) {
+            const velocity = handX - prevHandX;
+            handVelSmooth = 0.8 * handVelSmooth + 0.2 * velocity;
+            const absVel = Math.abs(handVelSmooth);
+            // Update rate
+            const rate = sk.map(absVel, 5, 40, 1, 3); // 5 is the starting point of velocity change
+            const clampedRate = sk.constrain(rate, 1, 3);
+            if (isFinite(clampedRate)) audio.rate(clampedRate);
+            else audio.rate(1);
+            // Update volume
+            const vol = sk.map(absVel, 0, 20, 0, 3);
+            const clampedVol = sk.constrain(vol, 0.05, 3);
+            if (isFinite(clampedVol)) audio.setVolume(clampedVol);
+            else audio.setVolume(0.05);
+        }
+        if (!audio.isPlaying()) audio.play();
+    }
+    function updateVideo(handX) {
+        if (!isVideoLoaded || !video) return;
+        const duration = video.duration();
+        if (!duration) return;
+        // Update video time based on hand position
+        const time = sk.map(handX, 0, sk.width, 0, duration);
+        video.time(time);
+        // Update playback rate with momentum
+        const velocity = handX - prevHandX;
+        const absVel = Math.abs(velocity);
+        const minRate = 0.1;
+        const maxRate = 1;
+        const targetRate = sk.map(absVel, 0, 40, minRate, maxRate);
+        const clampedTarget = sk.constrain(targetRate, minRate, maxRate);
+        playbackSmooth = 0.95 * playbackSmooth + 0.05 * clampedTarget;
+        const finalRate = sk.constrain(playbackSmooth, minRate, maxRate);
+        if (isFinite(finalRate)) video.elt.playbackRate = finalRate;
+        else video.elt.playbackRate = 1;
+    }
     sk.preload = ()=>{
-        sound = sk.loadSound((0, _lesGensMp3Default.default), ()=>{
-            soundLoaded = true;
-        // Do not start the sound yet
+        audio = sk.loadSound((0, _lesGensMp3Default.default), ()=>{
+            isAudioLoaded = true;
         });
     };
     sk.setup = ()=>{
         sk.createCanvas(sk.windowWidth, sk.windowHeight);
         sk.colorMode(sk.HSL, 360, 100, 100);
         sk.background(0);
-        camFeed = (0, _cameraUtils.initializeCamCapture)(sk, (0, _poseModelMediaPipe.mediaPipe));
-        // Load and set up the video
+        cam = (0, _cameraUtils.initializeCamCapture)(sk, (0, _poseModelMediaPipe.mediaPipe));
         video = sk.createVideo((0, _sunset02Mp4Default.default), ()=>{
-            videoLoaded = true;
-            video.hide(); // Hide the DOM element
-        // Do not start the video yet
+            isVideoLoaded = true;
+            video.hide();
         });
-        // Add keyPressed function to handle spacebar input
         sk.keyPressed = ()=>{
-            if (sk.keyCode === 32) // 32 is the ASCII code for the spacebar
-            {
-                if (!experienceStarted && soundLoaded && videoLoaded) {
-                    experienceStarted = true;
-                    sound.loop();
-                    video.loop();
-                    video.play();
-                }
+            if (sk.keyCode === 32 && !isStarted && isAudioLoaded && isVideoLoaded) {
+                isStarted = true;
+                audio.loop();
+                video.loop();
+                video.play();
             }
         };
     };
     sk.draw = ()=>{
-        if (!experienceStarted) {
-            // Display the message
-            sk.background(0); // Clear the background
-            sk.fill(255); // White text
+        if (!isStarted) {
+            sk.background(0);
+            sk.fill(255);
             sk.textAlign(sk.CENTER, sk.CENTER);
             sk.textSize(32);
             sk.text("PRESS SPACE BAR TO START", sk.width / 2, sk.height / 2);
-            return; // Exit the draw function until the experience starts
+            return;
         }
-        // Draw the video on the canvas if the experience has started
-        if (videoLoaded && experienceStarted) sk.image(video, 0, 0, sk.width, sk.height);
-        const landmarksIndex = [
+        if (isVideoLoaded) sk.image(video, 0, 0, sk.width, sk.height);
+        const landmarks = (0, _landmarksHandler.getMappedLandmarks)(sk, (0, _poseModelMediaPipe.mediaPipe), cam, [
             16,
             18,
             20
-        ];
-        const landmarks = (0, _landmarksHandler.getMappedLandmarks)(sk, (0, _poseModelMediaPipe.mediaPipe), camFeed, landmarksIndex);
-        // Check if all required landmarks are available and finite
-        const requiredLandmarksExist = isFinite(landmarks.LM16X) && isFinite(landmarks.LM16Y) && isFinite(landmarks.LM18X) && isFinite(landmarks.LM18Y) && isFinite(landmarks.LM20X) && isFinite(landmarks.LM20Y);
-        if (requiredLandmarksExist) {
-            // Get averaged positions for smoother tracking
-            const rightWristX = avgPos("RWX", landmarks.LM16X);
-            const rightWristY = avgPos("RWY", landmarks.LM16Y);
-            const rightPinkyX = avgPos("RPX", landmarks.LM18X);
-            const rightPinkyY = avgPos("RPY", landmarks.LM18Y);
-            const rightIndexX = avgPos("RIX", landmarks.LM20X);
-            const rightIndexY = avgPos("RIY", landmarks.LM20Y);
-            const rightHandX = (rightWristX + rightPinkyX + rightIndexX) / 3;
-            const rightHandY = (rightWristY + rightPinkyY + rightIndexY) / 3;
-            if (experienceStarted) {
-                // Sound control based on hand velocity
-                if (soundLoaded) {
-                    if (prevHandX !== null && isFinite(prevHandX)) {
-                        const handVelocity = rightHandX - prevHandX;
-                        // Smooth the hand velocity
-                        smoothedHandVelocity = 0.8 * smoothedHandVelocity + 0.2 * handVelocity;
-                        // Calculate the absolute value of smoothed hand velocity
-                        const absHandVelocity = Math.abs(smoothedHandVelocity);
-                        // Map hand velocity to playback rate
-                        const playbackRate = sk.map(absHandVelocity, 5, 40, 1, 3);
-                        // Clamp the playback rate
-                        const clampedRate = sk.constrain(playbackRate, 1, 3);
-                        if (isFinite(clampedRate)) sound.rate(clampedRate);
-                        else sound.rate(1); // Default to normal speed if clampedRate is not finite
-                        // Map the absolute hand velocity to volume
-                        const volume = sk.map(absHandVelocity, 0, 20, 0, 3);
-                        // Clamp the volume between 0.05 and 3
-                        const clampedVolume = sk.constrain(volume, 0.05, 3);
-                        if (isFinite(clampedVolume)) sound.setVolume(clampedVolume);
-                        else sound.setVolume(0.05);
-                    }
-                    if (!sound.isPlaying()) sound.play();
-                }
-                // Video control based on hand movement with momentum effect
-                if (videoLoaded) {
-                    const videoDuration = video.duration();
-                    if (videoDuration) {
-                        // Map hand X position to video time
-                        const videoTime = sk.map(rightHandX, 0, sk.width, 0, videoDuration);
-                        video.time(videoTime);
-                        // Determine if the hand is moving
-                        const handVelocity = rightHandX - prevHandX;
-                        const absHandVelocity = Math.abs(handVelocity);
-                        // Map hand movement to target playback rate with momentum
-                        const minPlaybackRate = 0.1; // Minimum supported playback rate
-                        const maxPlaybackRate = 1; // Normal playback rate
-                        const targetPlaybackRate = sk.map(absHandVelocity, 0, 40, minPlaybackRate, maxPlaybackRate);
-                        const clampedTargetRate = sk.constrain(targetPlaybackRate, minPlaybackRate, maxPlaybackRate);
-                        // Smoothly adjust the playback rate towards the target rate
-                        smoothedPlaybackRate = 0.95 * smoothedPlaybackRate + 0.05 * clampedTargetRate;
-                        // Ensure playback rate is within supported range
-                        const finalPlaybackRate = sk.constrain(smoothedPlaybackRate, minPlaybackRate, maxPlaybackRate);
-                        // Set the video's playback rate
-                        if (isFinite(finalPlaybackRate)) video.elt.playbackRate = finalPlaybackRate;
-                        else video.elt.playbackRate = 1; // Default to normal speed
-                    }
-                }
+        ]);
+        const hasValidLandmarks = isFinite(landmarks.LM16X) && isFinite(landmarks.LM16Y) && isFinite(landmarks.LM18X) && isFinite(landmarks.LM18Y) && isFinite(landmarks.LM20X) && isFinite(landmarks.LM20Y);
+        if (hasValidLandmarks) {
+            // Calculate hand position
+            const handX = (avgPos("RWX", landmarks.LM16X) + avgPos("RPX", landmarks.LM18X) + avgPos("RIX", landmarks.LM20X)) / 3;
+            const handY = (avgPos("RWY", landmarks.LM16Y) + avgPos("RPY", landmarks.LM18Y) + avgPos("RIY", landmarks.LM20Y)) / 3;
+            if (isStarted) {
+                updateAudio(handX);
+                updateVideo(handX);
             }
-            prevHandX = rightHandX;
+            prevHandX = handX;
+            // Draw mini camera view
             sk.push();
-            sk.image(camFeed, sk.width - camFeed.scaledWidth / 12 - 24, sk.height - camFeed.scaledHeight / 12 - 24, camFeed.scaledWidth / 12, camFeed.scaledHeight / 12);
+            sk.image(cam, sk.width - cam.scaledWidth / 12 - 24, sk.height - cam.scaledHeight / 12 - 24, cam.scaledWidth / 12, cam.scaledHeight / 12);
             sk.pop();
-            // Visual feedback (draw an ellipse at the hand position)
+            // Draw hand indicator
             sk.fill(120, 100, 100);
             sk.noStroke();
-            sk.ellipse(rightHandX, rightHandY, 20, 20);
+            sk.ellipse(handX, handY, 20, 20);
         } else {
-            // Reset variables if hand landmarks are not detected
             prevHandX = null;
-            smoothedHandVelocity = 0;
-            smoothedPlaybackRate = 1;
+            handVelSmooth = 0;
+            playbackSmooth = 1;
         }
     };
 });
