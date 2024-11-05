@@ -3,7 +3,7 @@ import { PoseLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task";
 const MODEL_URL_WASM =
-  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm";
+  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm";
 
 const NUM_POSES = 1;
 const RUNNING_MODE = "VIDEO";
