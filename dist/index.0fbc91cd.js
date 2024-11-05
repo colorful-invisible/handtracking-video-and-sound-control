@@ -591,8 +591,8 @@ var _landmarksHandler = require("./landmarksHandler");
 var _utils = require("./utils");
 var _lesGensMp3 = require("../assets/sounds/les-gens.mp3");
 var _lesGensMp3Default = parcelHelpers.interopDefault(_lesGensMp3);
-var _bhuvarloka01Mp4 = require("../assets/videos/bhuvarloka_01.mp4");
-var _bhuvarloka01Mp4Default = parcelHelpers.interopDefault(_bhuvarloka01Mp4);
+var _bhuvarloka01CompressMp4 = require("../assets/videos/bhuvarloka_01_compress.mp4");
+var _bhuvarloka01CompressMp4Default = parcelHelpers.interopDefault(_bhuvarloka01CompressMp4);
 window.p5 = require("94d0139496625edf");
 require("5c9986b8e4619016");
 new p5((sk)=>{
@@ -656,7 +656,7 @@ new p5((sk)=>{
         sk.colorMode(sk.HSL, 360, 100, 100);
         sk.background(0);
         cam = (0, _cameraUtils.initializeCamCapture)(sk, (0, _poseModelMediaPipe.mediaPipe));
-        video = sk.createVideo((0, _bhuvarloka01Mp4Default.default), ()=>{
+        video = sk.createVideo((0, _bhuvarloka01CompressMp4Default.default), ()=>{
             isVideoLoaded = true;
             video.hide();
         });
@@ -713,7 +713,7 @@ new p5((sk)=>{
     };
 });
 
-},{"94d0139496625edf":"7Uk5U","5c9986b8e4619016":"izzJQ","./poseModelMediaPipe":"8elxC","./cameraUtils":"2RWfO","./landmarksHandler":"44KuU","./utils":"bVlgj","../assets/sounds/les-gens.mp3":"iQqKj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../assets/videos/bhuvarloka_01.mp4":"3wN5l"}],"7Uk5U":[function(require,module,exports) {
+},{"94d0139496625edf":"7Uk5U","5c9986b8e4619016":"izzJQ","./poseModelMediaPipe":"8elxC","./cameraUtils":"2RWfO","./landmarksHandler":"44KuU","./utils":"bVlgj","../assets/sounds/les-gens.mp3":"iQqKj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../assets/videos/bhuvarloka_01_compress.mp4":"k3HVA"}],"7Uk5U":[function(require,module,exports) {
 /*! p5.js v1.11.1 October 31, 2024 */ var global = arguments[3];
 !function(e1) {
     module.exports = e1();
@@ -57441,9 +57441,9 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"3wN5l":[function(require,module,exports) {
-module.exports = require("757b4396b921df8d").getBundleURL("9up4p") + "bhuvarloka_01.e03af282.mp4" + "?" + Date.now();
+},{}],"k3HVA":[function(require,module,exports) {
+module.exports = require("57536e836250a8e3").getBundleURL("9up4p") + "bhuvarloka_01_compress.1af4c1b1.mp4" + "?" + Date.now();
 
-},{"757b4396b921df8d":"lgJ39"}]},["h9Rts","fFaKF"], "fFaKF", "parcelRequire94c2")
+},{"57536e836250a8e3":"lgJ39"}]},["h9Rts","fFaKF"], "fFaKF", "parcelRequire94c2")
 
 //# sourceMappingURL=index.0fbc91cd.js.map

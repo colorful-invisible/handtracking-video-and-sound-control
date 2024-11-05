@@ -5,7 +5,7 @@ import { initializeCamCapture } from "./cameraUtils";
 import { getMappedLandmarks } from "./landmarksHandler";
 import { averageLandmarkPosition, pulse } from "./utils";
 import soundURL from "../assets/sounds/les-gens.mp3";
-import videoURL from "../assets/videos/bhuvarloka_01.mp4";
+import videoURL from "../assets/videos/bhuvarloka_01_compress.mp4";
 
 new p5((sk) => {
   // Media elements
