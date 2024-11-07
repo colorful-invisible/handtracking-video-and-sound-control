@@ -589,10 +589,10 @@ var _poseModelMediaPipe = require("./poseModelMediaPipe");
 var _cameraUtils = require("./cameraUtils");
 var _landmarksHandler = require("./landmarksHandler");
 var _utils = require("./utils");
-var _lesGensMp3 = require("../assets/sounds/les-gens.mp3");
-var _lesGensMp3Default = parcelHelpers.interopDefault(_lesGensMp3);
-var _bhuvarloka01CompressMp4 = require("../assets/videos/bhuvarloka_01_compress.mp4");
-var _bhuvarloka01CompressMp4Default = parcelHelpers.interopDefault(_bhuvarloka01CompressMp4);
+var _wind01Mp3 = require("../assets/sounds/wind_01.mp3");
+var _wind01Mp3Default = parcelHelpers.interopDefault(_wind01Mp3);
+var _bhuvarloka01Mp4 = require("../assets/videos/bhuvarloka_01.mp4");
+var _bhuvarloka01Mp4Default = parcelHelpers.interopDefault(_bhuvarloka01Mp4);
 window.p5 = require("94d0139496625edf");
 require("5c9986b8e4619016");
 new p5((sk)=>{
@@ -647,8 +647,12 @@ new p5((sk)=>{
         video.time(time);
     }
     sk.preload = ()=>{
-        audio = sk.loadSound((0, _lesGensMp3Default.default), ()=>{
+        audio = sk.loadSound((0, _wind01Mp3Default.default), ()=>{
             isAudioLoaded = true;
+        });
+        video = sk.createVideo((0, _bhuvarloka01Mp4Default.default), ()=>{
+            isVideoLoaded = true;
+            video.hide();
         });
     };
     sk.setup = ()=>{
@@ -656,10 +660,6 @@ new p5((sk)=>{
         sk.colorMode(sk.HSL, 360, 100, 100);
         sk.background(0);
         cam = (0, _cameraUtils.initializeCamCapture)(sk, (0, _poseModelMediaPipe.mediaPipe));
-        video = sk.createVideo((0, _bhuvarloka01CompressMp4Default.default), ()=>{
-            isVideoLoaded = true;
-            video.hide();
-        });
         sk.keyPressed = ()=>{
             if (sk.keyCode === 32 && !isStarted && isAudioLoaded && isVideoLoaded) {
                 isStarted = true;
@@ -713,7 +713,7 @@ new p5((sk)=>{
     };
 });
 
-},{"94d0139496625edf":"7Uk5U","5c9986b8e4619016":"izzJQ","./poseModelMediaPipe":"8elxC","./cameraUtils":"2RWfO","./landmarksHandler":"44KuU","./utils":"bVlgj","../assets/sounds/les-gens.mp3":"iQqKj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../assets/videos/bhuvarloka_01_compress.mp4":"k3HVA"}],"7Uk5U":[function(require,module,exports) {
+},{"94d0139496625edf":"7Uk5U","5c9986b8e4619016":"izzJQ","./poseModelMediaPipe":"8elxC","./cameraUtils":"2RWfO","./landmarksHandler":"44KuU","./utils":"bVlgj","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../assets/sounds/wind_01.mp3":"8eC7N","../assets/videos/bhuvarloka_01.mp4":"3wN5l"}],"7Uk5U":[function(require,module,exports) {
 /*! p5.js v1.11.1 October 31, 2024 */ var global = arguments[3];
 !function(e1) {
     module.exports = e1();
@@ -57403,10 +57403,10 @@ function averageLandmarkPosition(alpha = 0.2) {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iQqKj":[function(require,module,exports) {
-module.exports = require("1acd8f0964f2789a").getBundleURL("9up4p") + "les-gens.a29c28ff.mp3" + "?" + Date.now();
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8eC7N":[function(require,module,exports) {
+module.exports = require("b8dbb27c2d757410").getBundleURL("9up4p") + "wind_01.024af86e.mp3" + "?" + Date.now();
 
-},{"1acd8f0964f2789a":"lgJ39"}],"lgJ39":[function(require,module,exports) {
+},{"b8dbb27c2d757410":"lgJ39"}],"lgJ39":[function(require,module,exports) {
 "use strict";
 var bundleURL = {};
 function getBundleURLCached(id) {
@@ -57441,9 +57441,9 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"k3HVA":[function(require,module,exports) {
-module.exports = require("57536e836250a8e3").getBundleURL("9up4p") + "bhuvarloka_01_compress.1af4c1b1.mp4" + "?" + Date.now();
+},{}],"3wN5l":[function(require,module,exports) {
+module.exports = require("757b4396b921df8d").getBundleURL("9up4p") + "bhuvarloka_01.e03af282.mp4" + "?" + Date.now();
 
-},{"57536e836250a8e3":"lgJ39"}]},["h9Rts","fFaKF"], "fFaKF", "parcelRequire94c2")
+},{"757b4396b921df8d":"lgJ39"}]},["h9Rts","fFaKF"], "fFaKF", "parcelRequire94c2")
 
 //# sourceMappingURL=index.0fbc91cd.js.map

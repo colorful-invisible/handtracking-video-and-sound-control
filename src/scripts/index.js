@@ -4,8 +4,8 @@ import { mediaPipe } from "./poseModelMediaPipe";
 import { initializeCamCapture } from "./cameraUtils";
 import { getMappedLandmarks } from "./landmarksHandler";
 import { averageLandmarkPosition, pulse } from "./utils";
-import soundURL from "../assets/sounds/les-gens.mp3";
-import videoURL from "../assets/videos/bhuvarloka_01_compress.mp4";
+import soundURL from "../assets/sounds/wind_01.mp3";
+import videoURL from "../assets/videos/bhuvarloka_01.mp4";
 
 new p5((sk) => {
   // Media elements
@@ -82,6 +82,11 @@ new p5((sk) => {
     audio = sk.loadSound(soundURL, () => {
       isAudioLoaded = true;
     });
+
+    video = sk.createVideo(videoURL, () => {
+      isVideoLoaded = true;
+      video.hide();
+    });
   };
 
   sk.setup = () => {
@@ -89,11 +94,6 @@ new p5((sk) => {
     sk.colorMode(sk.HSL, 360, 100, 100);
     sk.background(0);
     cam = initializeCamCapture(sk, mediaPipe);
-
-    video = sk.createVideo(videoURL, () => {
-      isVideoLoaded = true;
-      video.hide();
-    });
 
     sk.keyPressed = () => {
       if (sk.keyCode === 32 && !isStarted && isAudioLoaded && isVideoLoaded) {
